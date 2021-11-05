@@ -24,7 +24,6 @@ def get_file_extension(url_string):
 def fetch_spacex_last_launch():
     name_of_directory = 'images'
     pathlib.Path(name_of_directory).mkdir(exist_ok=True)
-
     url_api_spacex = "https://api.spacexdata.com/v3/launches/"
     response = requests.get(url_api_spacex)
     urls_of_pictures_of_launches_spacex = response.json()[60]['links']['flickr_images']
