@@ -43,7 +43,6 @@ urls_of_pictures_of_epic_nasa = requests.get('https://api.nasa.gov/EPIC/api/natu
 for url_picture in urls_of_pictures_of_epic_nasa:
     formatted_date_image = datetime.datetime.fromisoformat(url_picture['date'])
     formatted_date_image = formatted_date_image.strftime('%Y/%m/%d')
-    date_of_image, _ = (url_picture['date'].replace('-', '/')).split()
     image_name = url_picture['image']
     url_of_image = f'https://api.nasa.gov/EPIC/archive/natural/{formatted_date_image}/png/{image_name}.png'
     response = requests.get(url_of_image, params=payloads)
