@@ -26,6 +26,16 @@ NASA_API_TOKEN - токен API NASA
 TELEGRAM_TOKEN - токен Telegram бота
 DELAY_IN_SENDING - задержка между отправкой новой партии фотографий
 
+Далее из консоли запустить программу:
+
+```
+python main.py
+```
+Затем зайти в Telegram бота и ввести команду:
+
+```
+/run_nasa
+```
 
 ## Цель проекта
 
