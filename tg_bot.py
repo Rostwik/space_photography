@@ -19,6 +19,12 @@ def start(update: Update, context: CallbackContext) -> None:
         chat_id='@whydoesapersonnotsitathome',
         text='Всем привет!'
     )
+    photo = open('images/epic_1b_20211104000830.png', 'rb')
+    context.bot.send_photo(
+        chat_id='@whydoesapersonnotsitathome',
+        caption=f'Фото',
+        photo=photo,
+    )
 
 
 updater = Updater(telegram_bot_token)
