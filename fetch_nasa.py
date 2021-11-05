@@ -20,6 +20,7 @@ def download_and_save_nasa_photos(nasa_api_token, delay_in_sending):
         image_name = url_picture['image']
         url_of_image = f'https://api.nasa.gov/EPIC/archive/natural/{formatted_date_image}/png/{image_name}.png'
         response = requests.get(url_of_image, params=payloads)
+        response.raise_for_status()
         name_of_directory = 'images'
         pathlib.Path(name_of_directory).mkdir(exist_ok=True)
         path_to_save = f'{name_of_directory}/{image_name}.png'
