@@ -1,53 +1,50 @@
+# @Space_photography_bot
 import os
-import datetime
+from os import listdir
 
-import requests
-import pathlib
-import urllib
+from telegram import Update, bot
+from telegram.ext import Updater, CommandHandler, CallbackContext
 from dotenv import load_dotenv
 
+from save_a_photo_of_space import download_and_save_nasa_photo
 
 load_dotenv()
-
 nasa_api_token = os.getenv('NASA_API_TOKEN')
+telegram_bot_token = os.getenv('TELEGRAM_TOKEN')
 
 
-def get_file_extension(url_string):
-    url_attributes = urllib.parse.urlsplit(url_string, scheme='', allow_fragments=True)
-    url_path = urllib.parse.unquote(url_attributes.path, encoding='utf-8', errors='replace')
-    print(url_path)
-    file_name = os.path.split(url_path)[1]
-    extension = os.path.splitext(file_name)[1]
-    return extension
+def get_bot_info(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text(f'{context.bot.get_me()}')
 
 
-def fetch_spacex_last_launch():
-    name_of_directory = 'images'
-    pathlib.Path(name_of_directory).mkdir(exist_ok=True)
-    url_api_spacex = "https://api.spacexdata.com/v3/launches/"
-    response = requests.get(url_api_spacex)
-    urls_of_pictures_of_launches_spacex = response.json()[60]['links']['flickr_images']
-
-    for url_picture in urls_of_pictures_of_launches_spacex:
-        filename_of_picture = url_picture.split('/')[-1]
-        response = requests.get(url_picture)
-        response.raise_for_status()
-        path_to_save = f'{name_of_directory}/{filename_of_picture}'
-        with open(path_to_save, 'wb') as file:
-            file.write(response.content)
+def start(update: Update, context: CallbackContext) -> None:
+    context.bot.sendMessage(
+        chat_id='@whydoesapersonnotsitathome',
+        text='Всем привет!'
+    )
 
 
-payloads = {'api_key': nasa_api_token}
-urls_of_pictures_of_epic_nasa = requests.get('https://api.nasa.gov/EPIC/api/natural/images', params=payloads).json()[:5]
+def send_photos_to_telegram_group(update: Update, context: CallbackContext):
+    while True:
+        directory_of_images = download_and_save_nasa_photo(nasa_api_token, 30)
+        pictures = listdir(directory_of_images)
+        for picture in pictures:
+            photo = open(f'{directory_of_images}/{picture}', 'rb')
+            context.bot.send_photo(
+                chat_id='@whydoesapersonnotsitathome',
+                caption=f'{picture}',
+                photo=photo,
+            )
 
-for url_picture in urls_of_pictures_of_epic_nasa:
-    formatted_date_image = datetime.datetime.fromisoformat(url_picture['date'])
-    formatted_date_image = formatted_date_image.strftime('%Y/%m/%d')
-    image_name = url_picture['image']
-    url_of_image = f'https://api.nasa.gov/EPIC/archive/natural/{formatted_date_image}/png/{image_name}.png'
-    response = requests.get(url_of_image, params=payloads)
-    name_of_directory = 'images'
-    pathlib.Path(name_of_directory).mkdir(exist_ok=True)
-    path_to_save = f'{name_of_directory}/{image_name}.png'
-    with open(path_to_save, 'wb') as file:
-        file.write(response.content)
+
+def main():
+    updater = Updater(telegram_bot_token)
+    updater.dispatcher.add_handler(CommandHandler('get_bot_info', get_bot_info))
+    updater.dispatcher.add_handler(CommandHandler('start', start))
+    updater.dispatcher.add_handler(CommandHandler('run_nasa', send_photos_to_telegram_group))
+    updater.start_polling()
+    updater.idle()
+
+
+if __name__ == '__main__':
+    main()
