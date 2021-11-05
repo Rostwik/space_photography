@@ -4,6 +4,7 @@ import urllib
 import requests
 import pathlib
 from dotenv import load_dotenv
+import datetime
 
 load_dotenv()
 
@@ -36,31 +37,18 @@ def fetch_spacex_last_launch():
             file.write(response.content)
 
 
-# fetch_spacex_last_launch()
-# print(get_file_extension('https://example.com/txt/hello%20world.txt?v=9#python'))
-
-
 payloads = {'api_key': nasa_api_token}
-# payloads = {'api_key': nasa_api_token, 'count': 50}
-# response = requests.get('https://api.nasa.gov/planetary/apod', params=payloads)
-response = requests.get('https://api.nasa.gov/EPIC/api/natural/images', params=payloads).json()[0]
-date_of_image, _ = (response['date'].replace('-', '/')).split()
-image_name = response['image']
-url_of_image = f'https://api.nasa.gov/EPIC/archive/natural/{date_of_image}/png/{image_name}.png'
-response = requests.get(url_of_image, params=payloads)
-name_of_directory = 'images'
-pathlib.Path(name_of_directory).mkdir(exist_ok=True)
-path_to_save = f'{name_of_directory}/{image_name}.png'
-with open(path_to_save, 'wb') as file:
-    file.write(response.content)
+urls_of_pictures_of_epic_nasa = requests.get('https://api.nasa.gov/EPIC/api/natural/images', params=payloads).json()[:5]
 
-# urls_of_photo_of_space = [photo_description['url'] for photo_description in response.json()]
-# name_of_directory = 'images'
-# pathlib.Path(name_of_directory).mkdir(exist_ok=True)
-# for url_picture in urls_of_photo_of_space:
-#     filename_of_picture = url_picture.split('/')[-1]
-#     response = requests.get(url_picture)
-#     response.raise_for_status()
-#     path_to_save = f'{name_of_directory}/{filename_of_picture}'
-#     with open(path_to_save, 'wb') as file:
-#         file.write(response.content)
+for url_picture in urls_of_pictures_of_epic_nasa:
+    formatted_date_image = datetime.datetime.fromisoformat(url_picture['date'])
+    formatted_date_image = formatted_date_image.strftime('%Y/%m/%d')
+    date_of_image, _ = (url_picture['date'].replace('-', '/')).split()
+    image_name = url_picture['image']
+    url_of_image = f'https://api.nasa.gov/EPIC/archive/natural/{formatted_date_image}/png/{image_name}.png'
+    response = requests.get(url_of_image, params=payloads)
+    name_of_directory = 'images'
+    pathlib.Path(name_of_directory).mkdir(exist_ok=True)
+    path_to_save = f'{name_of_directory}/{image_name}.png'
+    with open(path_to_save, 'wb') as file:
+        file.write(response.content)
