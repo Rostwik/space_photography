@@ -5,7 +5,7 @@ import requests
 import pathlib
 
 
-def download_and_save_nasa_photo(nasa_api_token, delay_in_sending):
+def download_and_save_nasa_photos(nasa_api_token, delay_in_sending):
     time.sleep(delay_in_sending)
 
     name_of_directory = 'images'

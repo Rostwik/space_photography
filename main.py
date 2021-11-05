@@ -6,11 +6,12 @@ from telegram import Update, bot
 from telegram.ext import Updater, CommandHandler, CallbackContext
 from dotenv import load_dotenv
 
-from save_a_photo_of_space import download_and_save_nasa_photo
+from save_a_photo_of_space import download_and_save_nasa_photos
 
 load_dotenv()
 nasa_api_token = os.getenv('NASA_API_TOKEN')
 telegram_bot_token = os.getenv('TELEGRAM_TOKEN')
+delay_in_sending = os.getenv('DELAY_IN_SENDING')
 
 
 def get_bot_info(update: Update, context: CallbackContext) -> None:
@@ -26,7 +27,7 @@ def start(update: Update, context: CallbackContext) -> None:
 
 def send_photos_to_telegram_group(update: Update, context: CallbackContext):
     while True:
-        directory_of_images = download_and_save_nasa_photo(nasa_api_token, 30)
+        directory_of_images = download_and_save_nasa_photos(nasa_api_token, delay_in_sending)
         pictures = listdir(directory_of_images)
         for picture in pictures:
             photo = open(f'{directory_of_images}/{picture}', 'rb')
