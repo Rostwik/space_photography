@@ -22,9 +22,9 @@ pip install -r requirements.txt
 
 Необходимо создать файл .env в корне папки программы, и заполнить следующие параметры для подключения к бд:
 
-NASA_API_TOKEN - токен API NASA
-TELEGRAM_TOKEN - токен Telegram бота
-DELAY_IN_SENDING - задержка между отправкой новой партии фотографий
+- NASA_API_TOKEN - токен API NASA
+- TELEGRAM_TOKEN - токен Telegram бота
+- DELAY_IN_SENDING - задержка между отправкой новой партии фотографий
 
 Далее из консоли запустить программу:
 
