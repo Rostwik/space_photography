@@ -12,12 +12,12 @@ def download_nasa_photos(nasa_api_token, directory_name):
     payloads = {'api_key': nasa_api_token}
     response = requests.get('https://api.nasa.gov/EPIC/api/natural/images', params=payloads)
     response.raise_for_status()
-    urls_of_pictures = response.json()
+    pictures_links = response.json()
 
-    for url_picture in urls_of_pictures:
-        formatted_date_image = datetime.datetime.fromisoformat(url_picture['date'])
+    for link in pictures_links:
+        formatted_date_image = datetime.datetime.fromisoformat(link['date'])
         formatted_date_image = formatted_date_image.strftime('%Y/%m/%d')
-        image_name = url_picture['image']
+        image_name = link['image']
         image_url = f'https://api.nasa.gov/EPIC/archive/natural/{formatted_date_image}/png/{image_name}.png'
         response = requests.get(image_url, params=payloads)
         response.raise_for_status()
@@ -28,12 +28,12 @@ def download_nasa_photos(nasa_api_token, directory_name):
     payloads = {'api_key': nasa_api_token, 'count': 30}
     response = requests.get('https://api.nasa.gov/planetary/apod', params=payloads)
     response.raise_for_status()
-    urls_of_pictures = response.json()
+    pictures_links = response.json()
 
-    for url_picture in urls_of_pictures:
-        response = requests.get(url_picture['url'])
+    for link in pictures_links:
+        response = requests.get(link['url'])
         response.raise_for_status()
-        filename_of_picture = get_file_name(url_picture['url'])
+        filename_of_picture = get_file_name(link['url'])
         path_to_save = f'{directory_name}/{filename_of_picture[1]}'
         with open(path_to_save, 'wb') as file:
             file.write(response.content)
