@@ -1,31 +1,23 @@
-import os
 import pathlib
-import urllib
-
 import requests
 
-
-def get_file_extension(url_string):
-    url_attributes = urllib.parse.urlsplit(url_string, scheme='', allow_fragments=True)
-    url_path = urllib.parse.unquote(url_attributes.path, encoding='utf-8', errors='replace')
-    print(url_path)
-    file_name = os.path.split(url_path)[1]
-    extension = os.path.splitext(file_name)[1]
-    return extension
+from tools import get_file_name
 
 
-def fetch_spacex():
-    name_of_directory = 'images'
-    pathlib.Path(name_of_directory).mkdir(exist_ok=True)
+def download_spacex_launch_photos(directory_name, flight_number):
+    pathlib.Path(directory_name).mkdir(exist_ok=True)
 
-    url_api_spacex = "https://api.spacexdata.com/v3/launches/"
+    url_api_spacex = f'https://api.spacexdata.com/v3/launches/{flight_number}'
     response = requests.get(url_api_spacex)
-    urls_of_pictures_of_launches_spacex = response.json()[60]['links']['flickr_images']
+    response.raise_for_status()
+    urls_of_pictures_of_launches = response.json()['links']['flickr_images']
 
-    for url_picture in urls_of_pictures_of_launches_spacex:
-        filename_of_picture = url_picture.split('/')[-1]
+    for url_picture in urls_of_pictures_of_launches:
+        filename_of_picture = get_file_name(url_picture)
+
         response = requests.get(url_picture)
         response.raise_for_status()
-        path_to_save = f'{name_of_directory}/{filename_of_picture}'
+
+        path_to_save = f'{directory_name}/{filename_of_picture[1]}'
         with open(path_to_save, 'wb') as file:
             file.write(response.content)
