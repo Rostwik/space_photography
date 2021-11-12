@@ -14,11 +14,5 @@ def download_spacex_launch_photos(directory_name, flight_number):
 
     for link in pictures_links:
         filename_of_picture = get_file_name(link)
-        save_photo(directory_name, filename_of_picture[1], link)
 
-        # response = requests.get(link)
-        # response.raise_for_status()
-        #
-        # path_to_save = f'{directory_name}/{filename_of_picture[1]}'
-        # with open(path_to_save, 'wb') as file:
-        #     file.write(response.content)
+        save_photo(directory_name, filename_of_picture[1], link)

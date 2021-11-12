@@ -19,11 +19,7 @@ def download_nasa_photos(nasa_api_token, directory_name):
         formatted_date_image = formatted_date_image.strftime('%Y/%m/%d')
         image_name = link['image']
         image_url = f'https://api.nasa.gov/EPIC/archive/natural/{formatted_date_image}/png/{image_name}.png'
-        # response = requests.get(image_url, params=payloads)
-        # response.raise_for_status()
-        # path_to_save = f'{directory_name}/{image_name}.png'
-        # with open(path_to_save, 'wb') as file:
-        #     file.write(response.content)
+
         save_photo(directory_name, image_name, image_url, payloads, '.png')
 
     payloads = {'api_key': nasa_api_token, 'count': 30}
@@ -33,11 +29,6 @@ def download_nasa_photos(nasa_api_token, directory_name):
 
     for link in pictures_links:
         filename_of_picture = get_file_name(link['url'])
-        # response = requests.get(link['url'])
-        # response.raise_for_status()
-        # path_to_save = f'{directory_name}/{filename_of_picture[1]}'
-        # with open(path_to_save, 'wb') as file:
-        #     file.write(response.content)
         save_photo(directory_name, filename_of_picture[1], link['url'])
 
 

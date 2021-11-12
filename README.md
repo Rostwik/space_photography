@@ -25,6 +25,7 @@ pip install -r requirements.txt
 - NASA_API_TOKEN - токен API NASA
 - TELEGRAM_TOKEN - токен Telegram бота
 - DELAY_IN_SENDING - задержка между отправкой новой партии фотографий
+- CHAT_ID - ссылка на Telegram канал, например: @telegram_channel
 
 Далее из консоли запустить программу:
 
